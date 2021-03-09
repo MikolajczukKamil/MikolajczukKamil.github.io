@@ -28,6 +28,7 @@ main {
   text-decoration: none;
   color: inherit;
   border-radius: 5px;
+  overflow: hidden;
   flex: 1;
   margin: 5px;
   min-width: 300px;
