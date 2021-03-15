@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projekt 1</title>
+    <title>Projekt 2</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -17,6 +17,10 @@
     <link rel="stylesheet" href="./css/main.css" />
     <link rel="stylesheet" href="./css/aside.css" />
     <link rel="stylesheet" href="./css/footer.css" />
+
+    <link rel="stylesheet" href="./css/game.css" />
+
+    <link rel="stylesheet" href="./css/portal/portal.css" />
   </head>
 
   <body>
@@ -89,11 +93,28 @@
                 </p>
               </article>
             </a>
+
+            
+            <a href="#" class="post" id="start-game">
+              <article>
+                <div class="post-image">
+                  <img src="./img/puzzle.PNG" alt="Gra puzzle" />
+                </div>
+
+                <h3>Gra polskie puzle</h3>
+
+                <p>
+                  Najlepsze puzle w Polsce, i nie tylko. Myślisz że znasz Polskę.
+                  99% osób nie kończy tej gry. Bądz pierwszy!
+                  Zacznij już dziś
+                </p>
+              </article>
+            </a>
           </div>
         </section>
       </main>
 
-      <aside>
+      <aside class="links-menu">
         <h3>Przydatne linki</h3>
 
         <ul class="usefull-links">
@@ -127,5 +148,28 @@
         </a>
       </div>
     </footer>
+
+    <aside>
+      <div class="portal" style="display: none;">
+        <div class="portal-view">
+          <header class="game-header">
+            <h2 class="game-title">Gra - Polskie puzle</h2>
+
+            <button id="close-game">
+              <img src="./img/close.svg" alt="close game" />
+            </button>
+          </header>
+
+          <div class="map"></div>
+
+          <p>
+            Licznik kroków: <span id="licznik-krokow">0</span>.
+            <span id="wygrana" style="display: none">Gratulacje! Wygrana!</span>
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <script src="./js/game.js"></script>
   </body>
 </html>

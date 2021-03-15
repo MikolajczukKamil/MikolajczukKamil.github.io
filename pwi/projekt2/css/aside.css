@@ -1,19 +1,16 @@
-aside {
+.links-menu {
   flex: 1;
-}
-
-aside {
   padding: 8px;
 }
 
 @media (max-width: 1100px) {
-  aside {
+  .links-menu {
     padding: 4px;
   }
 }
 
 @media (max-width: 600px) {
-  aside {
+  .links-menu {
     padding: 8px;
   }
 }

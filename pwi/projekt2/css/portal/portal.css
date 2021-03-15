@@ -1,0 +1,19 @@
+.portal {
+  top: 0;
+  left: 0;
+  display: flex;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.portal-view {
+  padding: 16px;
+  margin: auto;
+  background-color: white;
+  border-radius: 4px;
+  max-width: 1000px;
+}
