@@ -8,12 +8,15 @@ function $(selektor) {
 
 /**
  * @param {string} element
- * @returns {HTMLDivElement}
+ * @returns {HTMLElement}
  */
 function create(element) {
   return document.createElement(element)
 }
 
+/**
+ * @param {T[]} arr
+ */
 function shuttle(arr) {
   arr.sort(() => Math.random() - 0.5)
 }
@@ -56,7 +59,7 @@ function startGame() {
 
   /** @type {{ index: number; x: number; y: number; image: string }[]} */
   const tiles = []
-  /** @type {HTMLDivElement} */
+  /** @type {HTMLDivElement[]} */
   const elements = []
 
   let index = 0
