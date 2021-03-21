@@ -94,7 +94,6 @@
               </article>
             </a>
 
-            
             <a href="#" class="post" id="start-game">
               <article>
                 <div class="post-image">
@@ -104,9 +103,9 @@
                 <h3>Gra polskie puzle</h3>
 
                 <p>
-                  Najlepsze puzle w Polsce, i nie tylko. Myślisz że znasz Polskę.
-                  99% osób nie kończy tej gry. Bądz pierwszy!
-                  Zacznij już dziś
+                  Najlepsze puzle w Polsce, i nie tylko. Myślisz że znasz
+                  Polskę. 99% osób nie kończy tej gry. Bądz pierwszy! Zacznij
+                  już dziś
                 </p>
               </article>
             </a>
@@ -150,7 +149,7 @@
     </footer>
 
     <aside>
-      <div class="portal" style="display: none;">
+      <div class="portal" style="display: none">
         <div class="portal-view">
           <header class="game-header">
             <h2 class="game-title">Gra - Polskie puzle</h2>
@@ -163,7 +162,18 @@
           <div class="map"></div>
 
           <p>
-            Licznik kroków: <span id="licznik-krokow">0</span>.
+            Gracz <span id="gracz">A</span>. Licznik kroków:
+            <span id="licznik-krokow">0</span>.
+          </p>
+
+          <p>
+            <button id="ai-on-off">
+              <span id="ai-on">Uruchom AI dla gracza B</span>
+              <span id="ai-off" style="display: none"
+                >Zatrzymaj AI dla gracza B</span
+              >
+            </button>
+
             <span id="wygrana" style="display: none">Gratulacje! Wygrana!</span>
           </p>
         </div>

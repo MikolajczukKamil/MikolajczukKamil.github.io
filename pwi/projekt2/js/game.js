@@ -21,34 +21,18 @@ function shuttle(arr) {
   arr.sort(() => Math.random() - 0.5)
 }
 
-/**
- * @param {T[]} arr
- * @param {number} len
- * @returns {T[][]}
- */
-function group(arr, len) {
-  const chunks = []
-  const copy = arr.splice()
-
-  while (copy.length > len) {
-    chunks.push(copy.splice(0, len))
-  }
-
-  return chunks
-}
-
-$("#close-game").addEventListener("click", () => {
-  $(".map").innerHTML = ""
-  $(".portal").style.display = "none"
+$('#close-game').addEventListener('click', () => {
+  $('.map').innerHTML = ''
+  $('.portal').style.display = 'none'
 })
 
-$("#start-game").addEventListener("click", () => {
-  $(".portal").style.display = ""
+$('#start-game').addEventListener('click', () => {
+  $('.portal').style.display = ''
   startGame()
 })
 
 function startGame() {
-  const map = $(".map")
+  const map = $('.map')
   const scale = 7
   const XStart = 69,
     XEnd = 72
@@ -66,8 +50,8 @@ function startGame() {
 
   for (let y = YStart; y <= YEnd; y++) {
     for (let x = XStart; x <= XEnd; x++) {
-      const element = create("div")
-      element.classList.add("map-tail-container")
+      const element = create('div')
+      element.classList.add('map-tail-container')
       map.appendChild(element)
       elements.push(element)
 
@@ -81,7 +65,7 @@ function startGame() {
       index++
     }
 
-    map.appendChild(new Comment("row"))
+    map.appendChild(new Comment('row'))
   }
 
   shuttle(tiles)
@@ -92,40 +76,99 @@ function startGame() {
     div.style.backgroundImage = tile.image
   })
 
+  const gracze = 'AB'
   let licznikKrokow = 0
   let selectedElement = -1
   let win = false
+  let gracz = 0
+  let ai = false
+  let aiMessage = false
+  let aiWait = false
 
-  elements.forEach((div, i) => {
-    div.addEventListener("click", () => {
-      if (win) return
-      if (selectedElement >= 0 && selectedElement !== i) {
-        // move
-        const myTile = tiles[i]
-        const otherTile = tiles[selectedElement]
+  /**
+   * @param {HTMLDivElement} div
+   * @param {number} i
+   */
+  function handleClick(div, i) {
+    if (selectedElement < 0) {
+      // select
+      div.classList.add('active')
+      selectedElement = i
+      return
+    }
 
-        elements[i].style.backgroundImage = otherTile.image
-        elements[selectedElement].style.backgroundImage = myTile.image
+    // move
+    const myTile = tiles[i]
+    const otherTile = tiles[selectedElement]
 
-        tiles[i] = otherTile
-        tiles[selectedElement] = myTile
+    elements[i].style.backgroundImage = otherTile.image
+    elements[selectedElement].style.backgroundImage = myTile.image
 
-        elements[selectedElement].classList.remove("active")
-        $("#licznik-krokow").innerText = (licznikKrokow++).toString()
+    tiles[i] = otherTile
+    tiles[selectedElement] = myTile
 
-        if (tiles.every((el, i) => el.index === i)) {
-          win = true
-          $("#wygrana").style.display = "block"
-          map.style.gridGap = 0
-          map.style.userSelect = "none"
+    elements[selectedElement].classList.remove('active')
+    $('#licznik-krokow').innerText = (licznikKrokow++).toString()
+
+    if (tiles.every((el, i) => el.index === i)) {
+      win = true
+      $('#wygrana').style.display = ''
+      $('#ai-on-off').style.display = 'none'
+      map.style.gridGap = 0
+      map.style.userSelect = 'none'
+    }
+
+    selectedElement = -1
+    gracz = 1 - gracz
+    $('#gracz').innerText = gracze.charAt(gracz)
+
+    if (ai && gracz === 1) {
+      aiWait = true
+
+      // Daję czas na odświeżenie widoku
+      setTimeout(() => {
+        if (!aiMessage) {
+          aiMessage = true
+
+          alert('Teraz ruch AI, poczekaj chwilę')
         }
 
-        selectedElement = -1
-      } else {
-        // select
-        div.classList.add("active")
-        selectedElement = i
-      }
+        const ruch1 = Math.floor(Math.random() * elements.length)
+        let ruch2 = Math.floor(Math.random() * (elements.length - 1))
+        if (ruch2 >= ruch1) ruch2++
+
+        setTimeout(() => {
+          handleClick(elements[ruch1], ruch1)
+
+          setTimeout(() => {
+            handleClick(elements[ruch2], ruch2)
+
+            aiWait = false
+          }, Math.random() * 1000 + 500)
+        }, Math.random() * 1000 + 500)
+      })
+    }
+  }
+
+  elements.forEach((div, i) => {
+    div.addEventListener('click', () => {
+      if (aiWait || win || selectedElement === i) return
+
+      handleClick(div, i)
     })
+  })
+
+  $('#ai-on-off').addEventListener('click', () => {
+    ai = !ai
+
+    if (!ai) aiMessage = false
+
+    if (ai && gracz === 1) {
+      gracz = 0
+      $('#gracz').innerText = gracze.charAt(gracz)
+    }
+
+    $('#ai-off').style.display = ai ? '' : 'none'
+    $('#ai-on').style.display = ai ? 'none' : ''
   })
 }

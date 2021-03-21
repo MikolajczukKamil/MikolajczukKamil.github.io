@@ -10,6 +10,12 @@
   font-size: 1.2em;
 }
 
+@media (max-width: 400px) {
+  .header-row .menu {
+    display: none;
+  }
+}
+
 .spacer {
   flex-grow: 1;
 }
