@@ -8,9 +8,9 @@ export function Header() {
       <div className={styles.row}>
         <h1>Usługi mapowe GIS</h1>
 
-        <div className={styles.spaces}></div>
+        <div className={styles.spacer} />
 
-        <div className={styles.center}>
+        <div className={styles.buttons}>
           <LinkButton component="a">Facebook</LinkButton>
           <LinkButton component="a">Twitter</LinkButton>
         </div>

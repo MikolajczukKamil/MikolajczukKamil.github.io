@@ -1,8 +1,9 @@
 import React from "react"
+import { Game } from "./Game"
 import posts from "./posts.json"
 import styles from "./Posts.module.scss"
 
-interface IPost {
+export interface IPost {
   id: number
   url: string
   img: string
@@ -16,7 +17,7 @@ interface IPostProps {
   onClick?: (ev: React.MouseEvent<HTMLAnchorElement>) => void
 }
 
-function Post({
+export function Post({
   post: { img, url, imgAlt, title, description },
   onClick,
 }: IPostProps) {
@@ -35,16 +36,6 @@ function Post({
   )
 }
 
-const gamePost: IPost = {
-  id: -1,
-  url: "",
-  img: "./img/puzzle.PNG",
-  imgAlt: "Gra puzzle",
-  title: "Gra polskie puzle",
-  description:
-    "Najlepsze puzle w Polsce, i nie tylko. Myślisz że znasz Polskę. 99% osób nie kończy tej gry. Bądz pierwszy! Zacznij już dziś",
-}
-
 export function Posts() {
   return (
     <main>
@@ -56,8 +47,8 @@ export function Posts() {
             <Post post={post} key={post.id} />
           ))}
 
-          {/* Game */}
-          <Post post={gamePost} onClick={console.warn} />
+
+          <Game />
         </div>
       </section>
     </main>

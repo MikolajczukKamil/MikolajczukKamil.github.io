@@ -2,23 +2,26 @@
   margin-top: 0;
 }
 
-.map-tail-container {
+.active {
+}
+
+.mapTailContainer {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
-}
 
-.map-tail-container::before {
-  content: "";
-  padding-bottom: 100%;
-  display: inline-block;
-  vertical-align: top;
-}
+  &::before {
+    content: "";
+    padding-bottom: 100%;
+    display: inline-block;
+    vertical-align: top;
+  }
 
-.map-tail-container.active {
-  border-radius: 4px;
-  border: 2px solid black;
+  &.active {
+    border-radius: 4px;
+    border: 2px solid black;
+  }
 }
 
 .map {
@@ -47,7 +50,7 @@
   flex-direction: column;
 }
 
-.puzzle-item {
+.puzzleItem {
   width: 128px;
   height: 128px;
   margin-left: 4px;

@@ -1,15 +1,20 @@
-.center {
+@import './../styles/shadow';
+
+.buttons {
   display: flex;
   align-items: center;
+
+  @media (max-width: 400px) {
+    display: none;
+  }
 }
 
 .row {
+  @include material-shadow;
   display: flex;
   background-color: #2e7d32;
   color: white;
   padding: 4px 16px;
-  box-shadow: 0px 2px 1px -1px rgb(0, 0, 0),
-    0px 1px 1px 0px rgb(0, 0, 0), 0px 1px 3px 0px rgb(0, 0, 0);
 
   h1 {
     font-size: 1.2em;
