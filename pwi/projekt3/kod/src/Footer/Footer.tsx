@@ -1,11 +1,11 @@
 import React from "react"
 import { LinkButton } from "../Components/LinkButton"
-import styles from "./Footer.module.scss"
+import classes from "./Footer.module.scss"
 
 export function Footer() {
   return (
-    <footer className={styles.container}>
-      <div className={styles.content}>
+    <footer className={classes.container}>
+      <div className={classes.content}>
         <p>Kamil Mikołajczuk</p>
 
         <LinkButton href="https://github.com/MikolajczukKamil">

@@ -1,7 +1,7 @@
 import React from "react"
 import { Game } from "./Game"
 import posts from "./posts.json"
-import styles from "./Posts.module.scss"
+import classes from "./Posts.module.scss"
 
 export interface IPost {
   id: number
@@ -22,9 +22,9 @@ export function Post({
   onClick,
 }: IPostProps) {
   return (
-    <a href={url} className={styles.post} onClick={onClick}>
+    <a href={url} className={classes.post} onClick={onClick}>
       <article>
-        <div className={styles.image}>
+        <div className={classes.image}>
           <img src={img} alt={imgAlt} />
         </div>
 
@@ -40,9 +40,9 @@ export function Posts() {
   return (
     <main>
       <section>
-        <h2 className={styles.title}>Najważniejsze usługi mapowe</h2>
+        <h2 className={classes.title}>Najważniejsze usługi mapowe</h2>
 
-        <div className={styles.posts}>
+        <div className={classes.posts}>
           {posts.map((post) => (
             <Post post={post} key={post.id} />
           ))}

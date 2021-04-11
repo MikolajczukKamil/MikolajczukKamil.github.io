@@ -1,5 +1,5 @@
 import React from "react"
-import styles from "./LinkButton.module.scss"
+import classes from "./LinkButton.module.scss"
 
 interface IButtonProps {
   component?: string
@@ -9,7 +9,7 @@ interface IButtonProps {
 
 export function LinkButton({ children, href }: IButtonProps) {
   return (
-    <a href={href} className={styles.button}>
+    <a href={href} className={classes.button}>
       {children}
     </a>
   )

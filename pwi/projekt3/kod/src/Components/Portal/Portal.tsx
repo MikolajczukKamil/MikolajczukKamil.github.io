@@ -1,6 +1,6 @@
 import React from "react"
 import { CloseIcon } from "../Icons/Close"
-import styles from "./Portal.module.scss"
+import classes from "./Portal.module.scss"
 
 interface IPortalProps {
   title: string
@@ -13,13 +13,13 @@ export function Portal({ open, title, children, handleClose }: IPortalProps) {
   return (
     <aside>
       {open && (
-        <div className={styles.portal}>
-          <div className={styles.view}>
-            <header className={styles.header}>
-              <h2 className={styles.title}>{title}</h2>
+        <div className={classes.portal}>
+          <div className={classes.view}>
+            <header className={classes.header}>
+              <h2 className={classes.title}>{title}</h2>
 
-              <button onClick={handleClose} className={styles.closeGame}>
-                <CloseIcon className={styles.closeIcon} />
+              <button onClick={handleClose} className={classes.closeGame}>
+                <CloseIcon className={classes.closeIcon} />
               </button>
             </header>
 
