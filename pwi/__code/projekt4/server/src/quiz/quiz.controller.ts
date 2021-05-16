@@ -8,6 +8,15 @@ import { QuizResult, QuizService } from './quiz.service';
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
+  @Get()
+  index(): string {
+    return `
+    <h1>Hello world!</h1>
+    <a href="/quizzes">Quizy</a><br>
+    <a href="/quiz?id=1">Quiz 1</a><br>
+    `;
+  }
+
   @Get('/quiz')
   getQuiz(@Query('id') query?: string): QuizDto {
     if (!query) throw new Error(`No quiz id found`);
