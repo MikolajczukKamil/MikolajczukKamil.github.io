@@ -1,0 +1,22 @@
+[
+  {
+    "url": "https://pl.wikipedia.org/wiki/System_informacji_geograficznej",
+    "name": "System informacji geograficznej"
+  },
+  {
+    "url": "https://www.ogc.org/",
+    "name": "Open Geospatial Consortium"
+  },
+  {
+    "url": "https://qgis.org/pl/site/",
+    "name": "QGIS"
+  },
+  {
+    "url": "https://epsg.io/",
+    "name": "EPSG"
+  },
+  {
+    "url": "https://openlayers.org/",
+    "name": "OpenLayers"
+  }
+]
