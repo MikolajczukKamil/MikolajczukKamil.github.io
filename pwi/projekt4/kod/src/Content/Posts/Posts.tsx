@@ -1,5 +1,6 @@
 import React from "react"
 import { Game } from "./Game"
+import { Quizzes } from "./Quiz"
 import posts from "./posts.json"
 import classes from "./Posts.module.scss"
 
@@ -49,6 +50,7 @@ export function Posts() {
 
 
           <Game />
+          <Quizzes />
         </div>
       </section>
     </main>

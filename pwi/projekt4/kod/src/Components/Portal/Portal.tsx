@@ -6,7 +6,7 @@ interface IPortalProps {
   title: string
   open: boolean
   handleClose: () => void
-  children: React.ReactChild | React.ReactChild[]
+  children: any
 }
 
 export function Portal({ open, title, children, handleClose }: IPortalProps) {
