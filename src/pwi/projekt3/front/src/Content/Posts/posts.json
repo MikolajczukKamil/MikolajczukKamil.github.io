@@ -1,0 +1,26 @@
+[
+  {
+    "id":1,
+    "url": "#",
+    "img": "./img/mapa1.png",
+    "imgAlt": "mapa poglądowa WMS",
+    "title": "Web Map Service (WMS)",
+    "description": "Stworzony przez Open Geospatial Consortium (OGC) standard udostępniania w Internecie danych geograficznych (map) w postaci rastrowej"
+  },
+  {
+    "id":2,
+    "url": "#",
+    "img": "./img/mapa2.png",
+    "imgAlt": "mapa poglądowa WMTS",
+    "title": "Web Map Tile Service (WMTS)",
+    "description": "Standardowy protokół do obsługi wstępnie renderowanych lub obliczonych w czasie wykonywania kafelków map georeferencyjnych przez Internet.  Specyfikacja została opracowana i po raz pierwszy opublikowana przez Open Geospatial Consortium w 2010 roku."
+  },
+  {
+    "id":3,
+    "url": "#",
+    "img": "./img/mapa3.png",
+    "imgAlt": "mapa poglądowa WMS",
+    "title": "Tile Map Service (TMS Map Service)",
+    "description": "TMS Map Service to specyfikacja kafelkowych map internetowych opracowana przez Open Source Geospatial Foundation. Definicja zasadniczo wymaga struktury URI, która próbuje spełnić zasady REST."
+  }
+]
