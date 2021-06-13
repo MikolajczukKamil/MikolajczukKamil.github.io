@@ -1,17 +1,21 @@
-import React, { Component } from 'react'
-import { IPost, Post } from '../Posts'
-import { Portal } from '../../../Components/Portal'
-import classes from './Game.module.scss'
+import React, { Component } from "react"
+import { IPost, Post } from "../Posts"
+import { Portal } from "../../../Components/Portal"
+import classes from "./Game.module.scss"
+import {
+  translate,
+  Translate,
+  TranslationsContext,
+} from "../../../Translations"
 
-const gamePost: IPost = {
+const gamePost = (lang: string): IPost => ({
   id: -1,
-  url: '#',
-  img: './img/puzzle.PNG',
-  imgAlt: 'Gra puzzle',
-  title: 'Gra polskie puzle',
-  description:
-    'Najlepsze puzle w Polsce, i nie tylko. Myślisz że znasz Polskę. 99% osób nie kończy tej gry. Bądz pierwszy! Zacznij już dziś',
-}
+  url: "#",
+  img: "./img/puzzle.PNG",
+  imgAlt: translate("GameTitle", lang),
+  title: translate("GameTitle", lang),
+  description: translate("GameDescription", lang),
+})
 
 const scale = 7
 const XStart = 69
@@ -48,7 +52,7 @@ function generateTiles(): ITile[] {
 
 interface IState {
   player: number
-  iloscKrokow: number
+  stepsCount: number
   open: boolean
   win: boolean
   ai: boolean
@@ -59,9 +63,11 @@ interface IState {
 }
 
 export class Game extends Component<{}, IState> {
+  static contextType = TranslationsContext
+
   state: IState = {
     player: 0,
-    iloscKrokow: 0,
+    stepsCount: 0,
     open: false,
     win: false,
     ai: false,
@@ -72,7 +78,7 @@ export class Game extends Component<{}, IState> {
   }
 
   moveTo(index: number) {
-    const { player, iloscKrokow, win, selected, tiles } = this.state
+    const { player, stepsCount, win, selected, tiles } = this.state
 
     if (win || selected === index) return
 
@@ -82,7 +88,7 @@ export class Game extends Component<{}, IState> {
     }
 
     this.setState({ selected: -1 })
-    this.setState({ iloscKrokow: iloscKrokow + 1 })
+    this.setState({ stepsCount: stepsCount + 1 })
 
     const newTiles = [...tiles]
     newTiles[selected] = tiles[index]
@@ -105,9 +111,11 @@ export class Game extends Component<{}, IState> {
     this.setState({ aiWait: true })
 
     if (!aiMessage) {
+      const { lang } = this.context
+
       this.setState({ aiMessage: true })
 
-      setTimeout(() => alert('Teraz ruch AI, poczekaj chwilę'))
+      setTimeout(() => alert(translate("WaitForAI", lang)))
     }
 
     const ruch1 = Math.floor(Math.random() * tiles.length)
@@ -134,7 +142,7 @@ export class Game extends Component<{}, IState> {
     this.setState({
       open: false,
       player: 0,
-      iloscKrokow: 0,
+      stepsCount: 0,
       win: false,
       ai: false,
       aiWait: false,
@@ -142,21 +150,22 @@ export class Game extends Component<{}, IState> {
     })
   }
 
-  handleToogleAi = () => {
+  handleToggleAi = () => {
     const { ai } = this.state
 
     this.setState({ ai: !ai }, this.runAi)
   }
 
   render() {
-    const { player, iloscKrokow, open, win, ai, selected, tiles } = this.state
+    const { player, stepsCount, open, win, ai, selected, tiles } = this.state
+    const { lang } = this.context
 
     return (
       <>
-        <Post post={gamePost} onClick={this.handleOpen} />
+        <Post post={gamePost(lang)} onClick={this.handleOpen} />
 
         <Portal
-          title="Gra - Polskie puzle"
+          title={translate("GameTitle", lang)}
           open={open}
           handleClose={this.handleClose}
         >
@@ -165,7 +174,7 @@ export class Game extends Component<{}, IState> {
             style={{
               gridTemplateColumns: `repeat(${XEnd - XStart + 1}, 1fr)`,
               gridGap: win ? 0 : undefined,
-              userSelect: win ? 'none' : undefined,
+              userSelect: win ? "none" : undefined,
             }}
           >
             {tiles.map(({ index, x, y }, i) => (
@@ -173,8 +182,8 @@ export class Game extends Component<{}, IState> {
                 key={index}
                 className={[
                   classes.mapTailContainer,
-                  selected === i ? classes.active : '',
-                ].join(' ')}
+                  selected === i ? classes.active : "",
+                ].join(" ")}
                 style={{
                   backgroundImage: `url(https://tile.openstreetmap.org/${scale}/${x}/${y}.png)`,
                 }}
@@ -186,12 +195,17 @@ export class Game extends Component<{}, IState> {
           </div>
 
           <p>
-            Gracz {player === 0 ? 'A' : 'B'}. Licznik kroków: {iloscKrokow}.{' '}
-            {win && 'Gratulacje! Wygrana!'}
+            <Translate>Player</Translate>
+            {player === 0 ? "A" : "B"}. <Translate>StepsCount</Translate>:{" "}
+            {stepsCount}. {win && <Translate>Win</Translate>}
           </p>
 
-          <button onClick={this.handleToogleAi}>
-            {ai ? 'Zatrzymaj AI dla gracza B' : 'Uruchom AI dla gracza B'}
+          <button onClick={this.handleToggleAi}>
+            {ai ? (
+              <Translate>StopAI</Translate>
+            ) : (
+              <Translate>StartAI</Translate>
+            )}
           </button>
         </Portal>
       </>

@@ -7,8 +7,10 @@
   margin: 4px;
   background-color: #60ad5e;
   transition: 0.1s ease-in-out;
+  cursor: pointer;
+  user-select: none;
 
-  &:hover {
+  &:hover, &.active {
     background-color: white;
     color: #2e7d32;
   }

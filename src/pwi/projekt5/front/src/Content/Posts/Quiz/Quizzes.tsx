@@ -1,19 +1,24 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { IPost, Post } from '../Posts'
-import { api } from '../../../api'
-import { Portal } from '../../../Components/Portal'
-import classes from './Quiz.module.scss'
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { IPost, Post } from "../Posts"
+import { api } from "../../../api"
+import { Portal } from "../../../Components/Portal"
+import classes from "./Quiz.module.scss"
+import {
+  Translate,
+  translate,
+  TranslationsContext,
+} from "../../../Translations"
+import { useContext } from "react"
 
-const gamePost: IPost = {
+const quizPost = (lang: string): IPost => ({
   id: -2,
-  url: '#',
-  img: './img/quiz.jpg',
-  imgAlt: 'Quizy',
-  title: 'Quizy geograficzne',
-  description:
-    'Najlepsze quizy geograficzne na tej stronie, dokładnie takie jakie być powinny. Sprawdz się! Bądz najlepszy, poczuj się jak uczestnik 1 z 10',
-}
+  url: "#",
+  img: "./img/quiz.jpg",
+  imgAlt: translate("QuizTitle", lang),
+  title: translate("QuizTitle", lang),
+  description: translate("QuizDescription", lang),
+})
 
 interface QuizSchema {
   id: number
@@ -52,14 +57,13 @@ export function Quizzes() {
   const [loading, setLoading] = useState(false)
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [result, setResult] = useState<QuizResult | null>(null)
+  const { lang } = useContext(TranslationsContext)
 
   useEffect(() => {
-    if (quizzes.length > 0) return
-
-    axios.get<QuizSchema[]>(`${api}quizzes`).then((quizes) => {
-      setQuizzes(quizes.data)
+    axios.get<QuizSchema[]>(`${api}quizzes?lang=${lang}`).then((quizzes) => {
+      setQuizzes(quizzes.data)
     })
-  }, [open])
+  }, [open, lang])
 
   const handleOpen = () => {
     setOpen(true)
@@ -75,10 +79,10 @@ export function Quizzes() {
   const handleOpenQuiz = (schema: QuizSchema) => {
     setLoading(true)
 
-    axios.get<Quiz>(`${api}quiz?id=${schema.id}`).then((quize) => {
+    axios.get<Quiz>(`${api}quiz?id=${schema.id}`).then(({ data }) => {
       const quiz = {
-        ...quize.data,
-        questions: quize.data.questions.map((q) => ({
+        ...data,
+        questions: data.questions.map((q) => ({
           ...q,
           answer: null,
         })),
@@ -110,19 +114,29 @@ export function Quizzes() {
 
   return (
     <>
-      <Post post={gamePost} onClick={handleOpen} />
+      <Post post={quizPost(lang)} onClick={handleOpen} />
 
       <Portal
-        title="Quizy - Quizy geograficzne"
+        title={translate("QuizTitle", lang)}
         open={open}
         handleClose={handleClose}
       >
-        {loading && <p>Łatowanie ...</p>}
+        {loading && (
+          <p>
+            <Translate>Loading</Translate> ...
+          </p>
+        )}
         {quiz === null ? (
           <>
-            <h2>Dostępne Quizy</h2>
+            <h2>
+              <Translate>AvailableQuizzes</Translate>
+            </h2>
 
-            {quizzes.length === 0 && <p>Ładowanie ...</p>}
+            {quizzes.length === 0 && (
+              <p>
+                <Translate>Loading</Translate> ...
+              </p>
+            )}
 
             {quizzes.map((q) => (
               <div
@@ -153,7 +167,7 @@ export function Quizzes() {
                       : {
                           ...quiz,
                           questions: quiz.questions.map((q) =>
-                            q.id == schema.id ? { ...q, answer } : q
+                            q.id === schema.id ? { ...q, answer } : q
                           ),
                         }
                   )
@@ -167,12 +181,14 @@ export function Quizzes() {
               className={classes.sendBtn}
               onClick={handleCheckQuiz}
             >
-              Sprawdz
+              <Translate>Check</Translate>
             </button>
           </>
         ) : (
           <>
-            <h2>Wynik quizu</h2>
+            <h2>
+              <Translate>QuizResult</Translate>
+            </h2>
             <h3>{quiz.name}</h3>
 
             <img src={quiz.image} alt="" className={classes.quizImg} />
@@ -181,16 +197,20 @@ export function Quizzes() {
               {result.correct} / {result.correct + result.errors} (
               {Math.round(
                 (result.correct * 100) / (result.correct + result.errors)
-              )}{' '}
+              )}{" "}
               %)
             </p>
 
             {Math.round(
               (result.correct * 100) / (result.correct + result.errors)
             ) <= 50 ? (
-              <p>Słabo 🤫</p>
+              <p>
+                <Translate>Bad</Translate> 🤫
+              </p>
             ) : (
-              <p>Dobrze 😀</p>
+              <p>
+                <Translate>Good</Translate> 😀
+              </p>
             )}
           </>
         )}
@@ -208,7 +228,9 @@ interface QuestionProps {
 function Question({ index, schema, selectAnswer }: QuestionProps) {
   return (
     <>
-      <h3>Pytanie nr {index}</h3>
+      <h3>
+        <Translate>QuestionNo</Translate> {index}
+      </h3>
       <h4>{schema.name}</h4>
 
       <div className={classes.answers}>
@@ -217,8 +239,8 @@ function Question({ index, schema, selectAnswer }: QuestionProps) {
             key={o.id}
             className={
               classes.answer +
-              ' ' +
-              ((o.id === schema.answer && classes.active) || '')
+              " " +
+              ((o.id === schema.answer && classes.active) || "")
             }
             onClick={() => selectAnswer(schema, o.id)}
           >

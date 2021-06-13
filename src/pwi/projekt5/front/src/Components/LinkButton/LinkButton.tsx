@@ -5,11 +5,17 @@ interface IButtonProps {
   component?: string
   children: string
   href?: string
+  active?: boolean
+  onClick?: any
 }
 
-export function LinkButton({ children, href }: IButtonProps) {
+export function LinkButton({ children, href, active, onClick }: IButtonProps) {
   return (
-    <a href={href} className={classes.button}>
+    <a
+      href={href}
+      className={[classes.button, active ? classes.active : ""].join(" ")}
+      onClick={onClick}
+    >
       {children}
     </a>
   )

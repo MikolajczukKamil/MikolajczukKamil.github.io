@@ -3,6 +3,7 @@ import { Game } from "./Game"
 import { Quizzes } from "./Quiz"
 import posts from "./posts.json"
 import classes from "./Posts.module.scss"
+import { Translate } from "../../Translations"
 
 export interface IPost {
   id: number
@@ -41,13 +42,14 @@ export function Posts() {
   return (
     <main>
       <section>
-        <h2 className={classes.title}>Najważniejsze usługi mapowe</h2>
+        <h2 className={classes.title}>
+          <Translate>PostsTitle</Translate>
+        </h2>
 
         <div className={classes.posts}>
           {posts.map((post) => (
             <Post post={post} key={post.id} />
           ))}
-
 
           <Game />
           <Quizzes />
