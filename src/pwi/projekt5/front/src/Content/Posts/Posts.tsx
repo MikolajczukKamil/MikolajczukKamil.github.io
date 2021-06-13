@@ -14,6 +14,7 @@ export interface IPost {
   imgAlt: string
   title: string
   description: string
+  content?: string[] | null
 }
 
 interface IPostProps {
