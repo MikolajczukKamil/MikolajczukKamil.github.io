@@ -11,7 +11,7 @@ export class QuizController {
   @Get()
   index(): string {
     return `
-    <h1>Hello world!</h1>
+    <h1>Hello quiz!</h1>
     <a href="/quizzes?lang=pl">Quizy</a><br>
     <a href="/quiz?id=1">Quiz 1</a><br>
     `;

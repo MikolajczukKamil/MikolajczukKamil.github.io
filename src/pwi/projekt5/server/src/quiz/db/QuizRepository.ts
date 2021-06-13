@@ -4,14 +4,14 @@ import { QuestionDto } from '../dto/Question.dto';
 import { QuizDto } from '../dto/Quiz.dto';
 import { Question } from '../model/Question';
 import { Quiz, QuizId, QuizSchema } from '../model/Quiz';
-import { data } from './data';
+import { quizzes } from './data/quizzes';
 
 @Injectable()
 export class QuizRepository {
   constructor(private utils: Utils) {}
 
   loadQuizzes(lang: string): QuizSchema[] {
-    return data.quizzes
+    return quizzes
       .filter((quiz) => quiz.lang === lang)
       .map((quiz) => this.removeQuestions(quiz))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -22,7 +22,7 @@ export class QuizRepository {
   }
 
   loadQuizSchema(id: QuizId): QuizDto | null {
-    const quiz = data.quizzes.find((q) => q.id === id);
+    const quiz = quizzes.find((q) => q.id === id);
 
     if (!quiz) return null;
 
@@ -30,7 +30,7 @@ export class QuizRepository {
   }
 
   loadQuiz(id: QuizId): Quiz | null {
-    return data.quizzes.find((q) => q.id === id) || null;
+    return quizzes.find((q) => q.id === id) || null;
   }
 
   private prepareQuestions(questions: Question[]): QuestionDto[] {
