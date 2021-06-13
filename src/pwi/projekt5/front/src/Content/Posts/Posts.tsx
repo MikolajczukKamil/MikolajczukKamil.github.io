@@ -1,9 +1,11 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 import { Game } from "./Game"
 import { Quizzes } from "./Quiz"
-import posts from "./posts.json"
 import classes from "./Posts.module.scss"
-import { Translate } from "../../Translations"
+import { Translate, TranslationsContext } from "../../Translations"
+import { useEffect } from "react"
+import axios from "axios"
+import { api } from "../../api"
 
 export interface IPost {
   id: number
@@ -39,6 +41,15 @@ export function Post({
 }
 
 export function Posts() {
+  const [posts, setPosts] = useState<IPost[]>([])
+  const { lang } = useContext(TranslationsContext)
+
+  useEffect(() => {
+    axios.get<IPost[]>(`${api}posts?lang=${lang}`).then((posts) => {
+      setPosts(posts.data)
+    })
+  }, [lang])
+
   return (
     <main>
       <section>
