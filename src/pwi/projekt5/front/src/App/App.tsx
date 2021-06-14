@@ -3,6 +3,7 @@ import "./App.scss"
 import { Header } from "../Header"
 import { Content } from "../Content"
 import { Footer } from "../Footer"
+import { Cookies } from "../Cookies"
 import { TranslationsContextProvider } from "../Translations"
 
 export function App() {
@@ -13,6 +14,8 @@ export function App() {
       <Content />
 
       <Footer />
+
+      <Cookies />
     </TranslationsContextProvider>
   )
 }

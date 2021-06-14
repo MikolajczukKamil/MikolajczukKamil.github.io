@@ -4,7 +4,7 @@ export const posts: Post[] = [
   {
     id: 1,
     lang: 'pl',
-    url: '#',
+    url: 'https://pl.wikipedia.org/wiki/Web_Map_Service',
     img: './img/mapa1.png',
     imgAlt: 'mapa poglądowa WMS',
     title: 'Web Map Service (WMS)',
@@ -25,7 +25,7 @@ export const posts: Post[] = [
   {
     id: 2,
     lang: 'en',
-    url: '#',
+    url: 'https://en.wikipedia.org/wiki/Web_Map_Service',
     img: './img/mapa1.png',
     imgAlt: 'WMS overview map',
     title: 'Web Map Service (WMS)',
@@ -46,7 +46,7 @@ export const posts: Post[] = [
   {
     id: 3,
     lang: 'pl',
-    url: '#',
+    url: 'https://pl.wikipedia.org/wiki/Web_Map_Tile_Service',
     img: './img/mapa2.png',
     imgAlt: 'mapa poglądowa WMTS',
     title: 'Web Map Tile Service (WMTS)',
@@ -72,7 +72,7 @@ export const posts: Post[] = [
   {
     id: 4,
     lang: 'en',
-    url: '#',
+    url: 'https://en.wikipedia.org/wiki/Web_Map_Tile_Service',
     img: './img/mapa2.png',
     imgAlt: 'WMTS overview map',
     title: 'Web Map Tile Service (WMTS)',

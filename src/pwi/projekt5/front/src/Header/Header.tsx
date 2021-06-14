@@ -4,7 +4,7 @@ import { Translate, TranslationsContext } from "../Translations"
 import classes from "./Header.module.scss"
 
 export function Header() {
-  const { lang, setLang } = useContext(TranslationsContext)
+  const { lang, changeLang } = useContext(TranslationsContext)
 
   return (
     <header>
@@ -16,21 +16,28 @@ export function Header() {
         <div className={classes.spacer} />
 
         <div className={classes.buttons}>
-          <LinkButton component="a">Facebook</LinkButton>
-          <LinkButton component="a">Twitter</LinkButton>
+          <LinkButton component="a" href="https://www.facebook.com/facebook">
+            Facebook
+          </LinkButton>
+
+          <LinkButton component="a" href="https://twitter.com/Twitter">
+            Twitter
+          </LinkButton>
         </div>
+
         <div className={classes.buttons}>
           <LinkButton
             component="a"
             active={lang === "pl"}
-            onClick={() => setLang("pl")}
+            onClick={() => changeLang("pl")}
           >
             PL
           </LinkButton>
+
           <LinkButton
             component="a"
             active={lang === "en"}
-            onClick={() => setLang("en")}
+            onClick={() => changeLang("en")}
           >
             EN
           </LinkButton>

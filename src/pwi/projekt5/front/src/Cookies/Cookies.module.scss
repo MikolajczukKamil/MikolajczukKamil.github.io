@@ -1,0 +1,22 @@
+@import "./../styles/shadow";
+
+.cookies {
+  position: fixed;
+  width: 100vw;
+  bottom: 0;
+  @include material-shadow;
+  display: flex;
+  background-color: #ebebeb;
+}
+
+.cookiesContainer {
+  margin: auto;
+  max-width: 1200px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+
+  p {
+    margin: 1em;
+  }
+}
