@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack://src/App/App.module.scss"],"names":[],"mappings":"AAAA,6BAEI,UAAW","file":"main.fcc5b63b.chunk.css","sourcesContent":[".container {\n  canvas {\n    width: 100%;\n  }\n}"]}
