@@ -6,6 +6,7 @@ import { Translate, TranslationsContext } from "../../Translations"
 import { useEffect } from "react"
 import axios from "axios"
 import { api } from "../../api"
+import { Portal } from "../../Components/Portal"
 
 export interface IPost {
   id: number
@@ -27,29 +28,36 @@ export function Post({
   onClick,
 }: IPostProps) {
   return (
-    <a href={url} className={classes.post} onClick={onClick}>
-      <article>
-        <div className={classes.image}>
-          <img src={img} alt={imgAlt} />
-        </div>
+    <article className={classes.post} onClick={onClick}>
+      <div className={classes.image}>
+        <img src={img} alt={imgAlt} />
+      </div>
 
-        <h3>{title}</h3>
+      <h3>{title}</h3>
 
-        <p>{description}</p>
-      </article>
-    </a>
+      <p>{description}</p>
+    </article>
   )
 }
 
 export function Posts() {
   const [posts, setPosts] = useState<IPost[]>([])
   const { lang } = useContext(TranslationsContext)
+  const [open, setOpen] = useState<IPost | null>(null)
 
   useEffect(() => {
     axios.get<IPost[]>(`${api}posts?lang=${lang}`).then((posts) => {
       setPosts(posts.data)
     })
   }, [lang])
+
+  const openPost = (post: IPost) => {
+    setOpen(post)
+  }
+
+  const handleClose = () => {
+    setOpen(null)
+  }
 
   return (
     <main>
@@ -60,12 +68,28 @@ export function Posts() {
 
         <div className={classes.posts}>
           {posts.map((post) => (
-            <Post post={post} key={post.id} />
+            <Post post={post} key={post.id} onClick={() => openPost(post)} />
           ))}
 
           <Game />
           <Quizzes />
         </div>
+
+        {open && (
+          <Portal title={open.title} open={!!open} handleClose={handleClose}>
+            <img src={open.img} alt={open.imgAlt} className={classes.postImage} />
+
+            <p>{open.description}</p>
+
+            {open.content?.map((txt, i) => (
+              <p key={i}>{txt}</p>
+            ))}
+
+            <a href={open.url}>
+              <Translate>More</Translate>
+            </a>
+          </Portal>
+        )}
       </section>
     </main>
   )

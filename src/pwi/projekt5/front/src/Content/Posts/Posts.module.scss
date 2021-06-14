@@ -1,4 +1,4 @@
-@import '../../styles/shadow';
+@import "../../styles/shadow";
 
 .posts {
   display: flex;
@@ -19,6 +19,7 @@
   flex: 1;
   margin: 5px;
   min-width: 300px;
+  cursor: pointer;
 
   h3,
   p {
@@ -37,4 +38,10 @@
     min-height: 100%;
     display: block;
   }
+}
+
+.postImage {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
 }
