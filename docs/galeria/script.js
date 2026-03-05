@@ -92,12 +92,22 @@ async function main() {
         );
       } else {
         try {
-          response = await fetch(fetchUrl);
+          console.log({ fetchUrl });
+
+          if (window.fetchSimple) {
+            response = await window
+              .fetchSimple(fetchUrl)
+              .then((t) => ({ ok: true, text: () => Promise.resolve(t) }));
+          } else {
+            response = await fetch(fetchUrl);
+          }
         } catch (e) {
           console.warn(
             "Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.",
             e,
           );
+
+          console.log({ e });
           useProxy = true;
           continue;
         }
