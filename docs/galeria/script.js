@@ -97,7 +97,7 @@ async function main() {
         break;
       }
 
-      const data = await response.text(); // Pobranie danych
+      const data = await response.text();
 
       const dataImages = getImages(data);
 
