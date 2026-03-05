@@ -70,6 +70,8 @@ async function main() {
   loadingIndicator.innerText = "Ładowanie...";
   document.body.appendChild(loadingIndicator);
 
+  let useProxy = false;
+
   try {
     while (true) {
       let fetchUrl;
@@ -81,13 +83,25 @@ async function main() {
         fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`;
       }
 
-      console.log(`Pobieranie: ${fetchUrl}`);
-      const response = await fetch(
-        "https://corsproxy.io/?" +
-          encodeURIComponent(
-            fetchUrl + "?r=" + Math.random().toString().split(".")[1],
-          ),
-      );
+      console.log(`Pobieranie: ${fetchUrl}`, { useProxy });
+
+      let response;
+      if (useProxy) {
+        response = await fetch(
+          "https://corsproxy.io/?" + encodeURIComponent(fetchUrl),
+        );
+      } else {
+        try {
+          response = await fetch(fetchUrl);
+        } catch (e) {
+          console.warn(
+            "Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.",
+            e,
+          );
+          useProxy = true;
+          continue;
+        }
+      }
 
       if (!response.ok) {
         console.warn(
