@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Simple Proxy",
+  "name": "Simple Fetch Proxy",
   "version": "1.0",
   "description": "Exposes fetchSimple(url) to web pages via background proxy.",
-  "permissions": [],
+  "permissions": ["scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "scripts": ["background.js"]
@@ -17,10 +17,9 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "simple-proxy",
+      "id": "simple-fetch-proxy@simple-fetch-extension",
       "data_collection_permissions": {
-        "required": [],
-        "optional": []
+        "required": ["none"]
       }
     }
   }
