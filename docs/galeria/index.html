@@ -501,6 +501,12 @@
       // --- Start ---
       showSlide(0)
       restartInterval()
+
+      try {
+        const wakeLock = await navigator.wakeLock.request("screen")
+      } catch (err) {
+        console.log(`${err.name}, ${err.message}`, err)
+      }
     }
 
     main().catch(console.error);
