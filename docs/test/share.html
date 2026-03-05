@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test udostepniania</title>
+  </head>
+  <body>
+    <button onclick="share('shareByEmail')">mail</button>
+    <button onclick="share('shareFb')">fb</button>
+    <button onclick="share('shareW')">whatsapp</button>
+    <button onclick="share('shareTT')">tt</button>
+    <button onclick="share('shareLi')">linkedin</button>
+    <button onclick="share('shareReddit')">reddit</button>
+    <button onclick="share('shareNative')">more</button>
+
+    <script>
+      class Component {
+        constructor() {
+            this.translocoService = {
+                translate: (v) => v
+            }
+
+            this.investor = { userName: 'Ala' }
+        }
+
+        getLink() {
+            return 'https://xstation5.xtb.com/?social_investor_id=500277'
+        }
+
+        ///
+
+        shareByEmail() {
+          const title = this.translocoService.translate(
+            "social.SHARE_PROFILE_VIEW.EMAIL_TITLE"
+          );
+
+          const enter = "%0D";
+          const body = [
+            this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_1"
+            ),
+            "",
+            this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_2",
+              { username: this.investor.userName }
+            ),
+            "",
+            this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_3"
+            ),
+            "",
+            this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_4"
+            ),
+            "",
+            this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_5"
+            ),
+            this.getLink(),
+          ].join(enter);
+
+          this.share(`mailto:?subject=${title}&body=${body}`);
+        }
+
+        copy() {
+          navigator.clipboard.writeText(this.getLink()).then();
+        }
+
+        shareData() {
+          return {
+            url: this.getLink(),
+            title: this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_TITLE"
+            ),
+            text: this.translocoService.translate(
+              "social.SHARE_PROFILE_VIEW.EMAIL_BODY_2",
+              { username: this.investor.userName }
+            ),
+          };
+        }
+
+        share(link) {
+          const popupParams =
+            "scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=600,height=600";
+
+          window.open(link, "_blank", popupParams);
+        }
+
+        shareNative() {
+          navigator.share(this.shareData()).then();
+        }
+
+        shareFb() {
+          // z xs5
+          // 'https://www.facebook.com/v2.5/dialog/share?app_id=1578744582443863&channel_url=https%3A%2F%2Fstaticxx.facebook.com%2Fx%2Fconnect%2Fxd_arbiter%2F%3Fversion%3D46%23cb%3Dfa456a44cc9902167%26domain%3Ddevxstation5.xtb.com%26is_canvas%3Dfalse%26origin%3Dhttps%3A%2F%2Fdevxstation5.xtb.com%2Ff3d20ff464c0a17e4%26relation%3Dopener&description=&display=popup&e2e={}&fallback_redirect_uri=https%3A%2F%2Fdevxstation5.xtb.com%2F%23%2Freal%2FloggedIn&href=https%3A%2F%2Fwww.xtb.com%2Ffake_image.png&locale=en_US&next=https%3A%2F%2Fstaticxx.facebook.com%2Fx%2Fconnect%2Fxd_arbiter%2F%3Fversion%3D46%23cb%3Df99ba0026435c7e81%26domain%3Ddevxstation5.xtb.com%26is_canvas%3Dfalse%26origin%3Dhttps%3A%2F%2Fdevxstation5.xtb.com%2Ff3d20ff464c0a17e4%26relation%3Dopener%26frame%3Df15e917d136c2d021%26result%3D"xxRESULTTOKENxx"&picture=https%3A%2F%2Fwww.xtb.com%2Ffake_image.png&sdk=joey&title=xStation5 Chart&version=v2.5'
+
+          const { url } = this.shareData();
+          const appId = 1572278636423791; // 1572278636423791 uat prod xs5 // 87741124305 YT app id
+
+          return `https://www.facebook.com/dialog/share?app_id=${appId}&href=${encodeURIComponent(
+            url
+          )}&display=popup`;
+        }
+
+        shareTT() {
+          const { url, text } = this.shareData();
+
+          let link = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+            url
+          )}`;
+
+          if (text) {
+            link += `&text=${encodeURIComponent(text)}`;
+          }
+
+          return link;
+        }
+
+        shareW() {
+          const { url, text } = this.shareData();
+
+          return `https://wa.me/?text=${encodeURIComponent(
+            (text ? text + " " : "") + url
+          )}`;
+        }
+
+        shareReddit() {
+          const { url, text } = this.shareData();
+
+          let link = `https://reddit.com/submit?url=${encodeURIComponent(url)}`;
+
+          if (text) {
+            link += `&title=${encodeURIComponent(text)}`;
+          }
+
+          return link;
+        }
+
+        shareLi() {
+          const { url, title, text } = this.shareData();
+
+          let link = `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(
+            url
+          )}`;
+
+          if (title) {
+            link += `&title=${encodeURIComponent(title)}`;
+          }
+
+          if (text) {
+            link += `&summary=${encodeURIComponent(text)}`;
+          }
+
+          return link;
+        }
+      }
+
+      const c = new Component()
+      
+      function share(name) {
+        const link = c[name]?.()
+        
+        console.log({ name, link })
+
+        if (link) {
+            c.share(link)
+        }
+
+      }
+
+    </script>
+  </body>
+</html>
