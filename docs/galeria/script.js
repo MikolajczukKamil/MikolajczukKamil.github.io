@@ -227,6 +227,19 @@ async function main() {
   }
   render()
 
+  // --- Preload następnych obrazów ---
+  const preloadedSet = new Set()
+  function preloadImageByIndex(idx) {
+    if (idx < 0 || idx >= enrichedImages.length) return
+    const src = enrichedImages[idx].src
+    if (preloadedSet.has(src)) return
+    const im = new Image()
+    im.src = src
+    preloadedSet.add(src)
+
+    console.log(`Preload: ${src}`)
+  }
+
   const speeds = [2, 5, 10, 20]
   let currentIndex = parseInt(localStorage.getItem('galleryIndex')) || 0
   let speed = parseInt(localStorage.getItem('gallerySpeed')) || 1000 * speeds[1]
@@ -243,6 +256,12 @@ async function main() {
 
     const prevIndex = currentIndex
     const nextIndex = index
+
+    setTimeout(() => {
+      preloadImageByIndex(nextIndex + 1)
+      preloadImageByIndex(nextIndex + 2)
+      preloadImageByIndex(nextIndex - 1)
+    })
 
     // Jeśli to ten sam slajd — ustaw bez animacji
     if (prevIndex === nextIndex) {
@@ -275,6 +294,11 @@ async function main() {
       to.style.zIndex = '2'
     }
 
+    // Aktualizujemy licznik od razu — nie czekamy na zakończenie animacji
+    currentIndex = nextIndex
+    localStorage.setItem('galleryIndex', currentIndex)
+    updateCounter()
+
     let finished = false
     function finishTransition() {
       if (finished) return
@@ -305,6 +329,9 @@ async function main() {
     // Fallback — w razie problemów z eventem
     setTimeout(() => finishTransition(), 1000)
   }
+
+  // Po każdej zmianie slajdu ładujemy kolejny obraz
+  // (zabezpieczenie też dla przypadku bez animacji)
 
   function nextSlide() {
     showSlide(currentIndex + 1)
