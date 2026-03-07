@@ -1,11 +1,13 @@
 async function main() {
   function getImages(data = '') {
     try {
-      return JSON.parse(data).map((e) =>
-        e.image.replace(
-          '800x430',
-          Math.random() < 0.7 ? '500x1000' : '900x430',
-        ),
+      return Array.from(JSON.parse(data)).map(
+        (e) =>
+          '' +
+          e.image.replace(
+            '800x430',
+            Math.random() < 0.7 ? '500x1000' : '900x430',
+          ),
       )
     } catch (e) {}
 
@@ -13,7 +15,7 @@ async function main() {
     const doc = parser.parseFromString(data, 'text/html')
     const items = [
       ...doc.querySelectorAll('.popup-gallery > li figure img'),
-    ].map((img) => img.src)
+    ].map((img) => '' + img.src)
 
     return items
   }
@@ -66,8 +68,10 @@ async function main() {
   console.log({ baseUrls })
 
   // --- 2. Pobieranie danych (Paginacja) ---
-  let allImages = []
-  let page = 1
+  const zeroPage = 0
+  const startPage = zeroPage
+  let allImages = ['']
+  let page = startPage
 
   const contentDiv = document.querySelector('.content')
   const loadingIndicator = document.createElement('div')
@@ -79,13 +83,13 @@ async function main() {
   loadingIndicator.innerText = 'Ładowanie...'
   document.body.appendChild(loadingIndicator)
 
-  const canUseProxy = new URLSearchParams(window.location.search).has('proxy');
+  const canUseProxy = new URLSearchParams(window.location.search).has('proxy')
   let useProxy = false
 
   try {
     // Dla każdego bazowego URL pobieramy paginację w podanej kolejności
     for (const baseUrl of baseUrls) {
-      page = 1
+      page = startPage
       while (true) {
         let fetchUrl
 
@@ -160,7 +164,7 @@ async function main() {
 
         allImages = allImages.concat(pageImages)
 
-        if (dataImages.length < 100 || page > 100) {
+        if (page !== zeroPage && (dataImages.length < 100 || page > 100)) {
           break
         }
         page++
@@ -173,6 +177,8 @@ async function main() {
   } finally {
     loadingIndicator.remove()
   }
+
+  allImages = [...new Set(allImages.filter(Boolean))]
 
   if (allImages.length === 0) {
     contentDiv.innerHTML =
@@ -317,13 +323,13 @@ async function main() {
   // środkowa 1/3 przełącza tryb pełnego wypełnienia (`fill-mode`).
   contentDiv.addEventListener('click', (e) => {
     const rect = contentDiv.getBoundingClientRect()
-    const y = e.clientY - rect.top
-    const h = rect.height || window.innerHeight
+    const x = e.clientX - rect.left
+    const w = rect.width || window.innerWidth
 
-    if (y < h / 3) {
+    if (x < w / 3) {
       prevSlide()
       restartInterval()
-    } else if (y > (2 * h) / 3) {
+    } else if (x > (2 * w) / 3) {
       nextSlide()
       restartInterval()
     } else {
