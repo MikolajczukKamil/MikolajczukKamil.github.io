@@ -53,8 +53,17 @@ async function main() {
       'https://jsonplaceholder.org/posts'
   }
 
-  // Usuń ewentualny trailing slash
-  const baseUrl = baseUrlParam.replace(/\/$/, '')
+  // Obsługa wielu URL oddzielonych przecinkami, usuń pustki i trailing slashe
+  let baseUrls = baseUrlParam
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  if (baseUrls.length === 0) {
+    baseUrls = ['https://jsonplaceholder.org/posts']
+  }
+  baseUrls = baseUrls.map((u) => u.replace(/\/$/, ''))
+
+  console.log({ baseUrls })
 
   // --- 2. Pobieranie danych (Paginacja) ---
   let allImages = []
@@ -73,77 +82,81 @@ async function main() {
   let useProxy = false
 
   try {
-    while (true) {
-      let fetchUrl
+    // Dla każdego bazowego URL pobieramy paginację w podanej kolejności
+    for (const baseUrl of baseUrls) {
+      page = 1
+      while (true) {
+        let fetchUrl
 
-      if (baseUrl.includes('placeholder')) {
-        if (page > 1) break
-        fetchUrl = baseUrl
-      } else {
-        fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`
-      }
+        if (baseUrl.includes('placeholder')) {
+          if (page > 1) break
+          fetchUrl = baseUrl
+        } else {
+          fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`
+        }
 
-      console.log(`Pobieranie: ${fetchUrl}`, { useProxy })
+        console.log(`Pobieranie: ${fetchUrl}`, { useProxy })
 
-      let response
-      if (useProxy) {
-        response = await fetch(
-          'https://corsproxy.io/?' + encodeURIComponent(fetchUrl),
-        )
-      } else {
-        try {
-          console.log({ fetchUrl })
-
-          if (window.fetchSimple) {
-            response = await window
-              .fetchSimple(fetchUrl)
-              .then((t) => ({ ok: true, text: () => Promise.resolve(t) }))
-          } else {
-            response = await fetch(fetchUrl)
-          }
-        } catch (e) {
-          console.warn(
-            'Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.',
-            e,
+        let response
+        if (useProxy) {
+          response = await fetch(
+            'https://corsproxy.io/?' + encodeURIComponent(fetchUrl),
           )
+        } else {
+          try {
+            console.log({ fetchUrl })
 
-          console.log({ e })
-          useProxy = true
-          alert('Error useProxy: ' + e.toString() + ' - ' + JSON.stringify(e))
-          continue
-        }
-      }
+            if (window.fetchSimple) {
+              response = await window
+                .fetchSimple(fetchUrl)
+                .then((t) => ({ ok: true, text: () => Promise.resolve(t) }))
+            } else {
+              response = await fetch(fetchUrl)
+            }
+          } catch (e) {
+            console.warn(
+              'Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.',
+              e,
+            )
 
-      if (!response.ok) {
-        console.warn(
-          `Nie można pobrać strony ${page}, status: ${response.status}`,
-          response,
-        )
-        break
-      }
-
-      const data = await response.text()
-
-      const dataImages = getImages(data)
-
-      const pageImages = dataImages.map((src, index) => {
-        // DEMO: Jeśli URL nie zawiera struktury katalogów, dodajemy sztuczną,
-        // grupując np. po 10 zdjęć do jednej "kolekcji"
-        if (!src.includes('/content/')) {
-          const fakeCollectionId =
-            Math.floor(allImages.length / 10 + index / 10) + 1
-          src = src + `?fake_path=/content/${fakeCollectionId}/img.png`
+            console.log({ e })
+            useProxy = true
+            alert('Error useProxy: ' + e.toString() + ' - ' + JSON.stringify(e))
+            continue
+          }
         }
 
-        return src
-      })
+        if (!response.ok) {
+          console.warn(
+            `Nie można pobrać strony ${page} z ${baseUrl}, status: ${response.status}`,
+            response,
+          )
+          break
+        }
 
-      allImages = allImages.concat(pageImages)
+        const data = await response.text()
 
-      if (dataImages.length < 100 || page > 100) {
-        break
+        const dataImages = getImages(data)
+
+        const pageImages = dataImages.map((src, index) => {
+          // DEMO: Jeśli URL nie zawiera struktury katalogów, dodajemy sztuczną,
+          // grupując np. po 10 zdjęć do jednej "kolekcji"
+          if (!src.includes('/content/')) {
+            const fakeCollectionId =
+              Math.floor(allImages.length / 10 + index / 10) + 1
+            src = src + `?fake_path=/content/${fakeCollectionId}/img.png`
+          }
+
+          return src
+        })
+
+        allImages = allImages.concat(pageImages)
+
+        if (dataImages.length < 100 || page > 100) {
+          break
+        }
+        page++
       }
-      page++
     }
   } catch (err) {
     console.error('Błąd pobierania:', err)
