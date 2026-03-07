@@ -95,6 +95,8 @@ async function main() {
           fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`
         }
 
+        fetchUrl = fetchUrl + '?cache=' + Date.now()
+
         console.log(`Pobieranie: ${fetchUrl}`, { useProxy })
 
         let response
