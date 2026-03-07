@@ -1,115 +1,115 @@
 async function main() {
-  function getImages(data = "") {
+  function getImages(data = '') {
     try {
       return JSON.parse(data).map((e) =>
         e.image.replace(
-          "800x430",
-          Math.random() < 0.7 ? "500x1000" : "900x430",
+          '800x430',
+          Math.random() < 0.7 ? '500x1000' : '900x430',
         ),
-      );
+      )
     } catch (e) {}
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(data, "text/html");
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(data, 'text/html')
     const items = [
-      ...doc.querySelectorAll(".popup-gallery > li figure img"),
-    ].map((img) => img.src);
+      ...doc.querySelectorAll('.popup-gallery > li figure img'),
+    ].map((img) => img.src)
 
-    return items;
+    return items
   }
 
   function checkDubels(lista = []) {
-    const widzianeId = new Set();
-    let ostatnieId = null;
+    const widzianeId = new Set()
+    let ostatnieId = null
 
     const duble = lista.filter((obj, index) => {
-      const aktualne = obj.collectionId;
+      const aktualne = obj.collectionId
 
       if (widzianeId.has(aktualne) && aktualne !== ostatnieId) {
         console.log(
           `Błąd: collectionId "${aktualne}" powróciło po przerwie (indeks ${index})`,
-        );
-        return true;
+        )
+        return true
       }
 
-      const czyZostawic = index === 0 || aktualne !== ostatnieId;
+      const czyZostawic = index === 0 || aktualne !== ostatnieId
 
-      widzianeId.add(aktualne);
-      ostatnieId = aktualne;
+      widzianeId.add(aktualne)
+      ostatnieId = aktualne
 
-      return false;
-    });
+      return false
+    })
 
-    console.log("Duble", duble);
+    console.log('Duble', duble)
   }
 
-  let baseUrlParam = new URLSearchParams(window.location.search).get("page");
+  let baseUrlParam = new URLSearchParams(window.location.search).get('page')
 
   if (baseUrlParam) {
-    localStorage.setItem("galleryBaseInfo", baseUrlParam);
+    localStorage.setItem('galleryBaseInfo', baseUrlParam)
   } else {
     baseUrlParam =
-      localStorage.getItem("galleryBaseInfo") ||
-      "https://jsonplaceholder.org/posts";
+      localStorage.getItem('galleryBaseInfo') ||
+      'https://jsonplaceholder.org/posts'
   }
 
   // Usuń ewentualny trailing slash
-  const baseUrl = baseUrlParam.replace(/\/$/, "");
+  const baseUrl = baseUrlParam.replace(/\/$/, '')
 
   // --- 2. Pobieranie danych (Paginacja) ---
-  let allImages = [];
-  let page = 1;
+  let allImages = []
+  let page = 1
 
-  const contentDiv = document.querySelector(".content");
-  const loadingIndicator = document.createElement("div");
-  loadingIndicator.style.color = "white";
-  loadingIndicator.style.position = "absolute";
-  loadingIndicator.style.zIndex = "999";
-  loadingIndicator.style.top = "50%";
-  loadingIndicator.style.left = "50%";
-  loadingIndicator.innerText = "Ładowanie...";
-  document.body.appendChild(loadingIndicator);
+  const contentDiv = document.querySelector('.content')
+  const loadingIndicator = document.createElement('div')
+  loadingIndicator.style.color = 'white'
+  loadingIndicator.style.position = 'absolute'
+  loadingIndicator.style.zIndex = '999'
+  loadingIndicator.style.top = '50%'
+  loadingIndicator.style.left = '50%'
+  loadingIndicator.innerText = 'Ładowanie...'
+  document.body.appendChild(loadingIndicator)
 
-  let useProxy = false;
+  let useProxy = false
 
   try {
     while (true) {
-      let fetchUrl;
+      let fetchUrl
 
-      if (baseUrl.includes("placeholder")) {
-        if (page > 1) break;
-        fetchUrl = baseUrl;
+      if (baseUrl.includes('placeholder')) {
+        if (page > 1) break
+        fetchUrl = baseUrl
       } else {
-        fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`;
+        fetchUrl = `${baseUrl}/sort/latest/mpage/${page}`
       }
 
-      console.log(`Pobieranie: ${fetchUrl}`, { useProxy });
+      console.log(`Pobieranie: ${fetchUrl}`, { useProxy })
 
-      let response;
+      let response
       if (useProxy) {
         response = await fetch(
-          "https://corsproxy.io/?" + encodeURIComponent(fetchUrl),
-        );
+          'https://corsproxy.io/?' + encodeURIComponent(fetchUrl),
+        )
       } else {
         try {
-          console.log({ fetchUrl });
+          console.log({ fetchUrl })
 
           if (window.fetchSimple) {
             response = await window
               .fetchSimple(fetchUrl)
-              .then((t) => ({ ok: true, text: () => Promise.resolve(t) }));
+              .then((t) => ({ ok: true, text: () => Promise.resolve(t) }))
           } else {
-            response = await fetch(fetchUrl);
+            response = await fetch(fetchUrl)
           }
         } catch (e) {
           console.warn(
-            "Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.",
+            'Błąd bezpośredniego pobierania (CORS?), przełączam na proxy.',
             e,
-          );
+          )
 
-          console.log({ e });
-          useProxy = true;
-          continue;
+          console.log({ e })
+          useProxy = true
+          continue
         }
       }
 
@@ -117,315 +117,335 @@ async function main() {
         console.warn(
           `Nie można pobrać strony ${page}, status: ${response.status}`,
           response,
-        );
-        break;
+        )
+        break
       }
 
-      const data = await response.text();
+      const data = await response.text()
 
-      const dataImages = getImages(data);
+      const dataImages = getImages(data)
 
       const pageImages = dataImages.map((src, index) => {
         // DEMO: Jeśli URL nie zawiera struktury katalogów, dodajemy sztuczną,
         // grupując np. po 10 zdjęć do jednej "kolekcji"
-        if (!src.includes("/content/")) {
+        if (!src.includes('/content/')) {
           const fakeCollectionId =
-            Math.floor(allImages.length / 10 + index / 10) + 1;
-          src = src + `?fake_path=/content/${fakeCollectionId}/img.png`;
+            Math.floor(allImages.length / 10 + index / 10) + 1
+          src = src + `?fake_path=/content/${fakeCollectionId}/img.png`
         }
 
-        return src;
-      });
+        return src
+      })
 
-      allImages = allImages.concat(pageImages);
+      allImages = allImages.concat(pageImages)
 
       if (dataImages.length < 100 || page > 100) {
-        break;
+        break
       }
-      page++;
+      page++
     }
   } catch (err) {
-    console.error("Błąd pobierania:", err);
+    console.error('Błąd pobierania:', err)
     contentDiv.innerHTML =
-      '<div style="color:white; display:flex; justify-content:center; align-items:center; height:100vh; font-size: 2rem;">Błąd pobierania.</div>';
+      '<div style="color:white; display:flex; justify-content:center; align-items:center; height:100vh; font-size: 2rem;">Błąd pobierania.</div>'
   } finally {
-    loadingIndicator.remove();
+    loadingIndicator.remove()
   }
 
   if (allImages.length === 0) {
     contentDiv.innerHTML =
-      '<div style="color:white; display:flex; justify-content:center; align-items:center; height:100vh; font-size: 2rem;">Brak obrazków do wyświetlenia.</div>';
-    return;
+      '<div style="color:white; display:flex; justify-content:center; align-items:center; height:100vh; font-size: 2rem;">Brak obrazków do wyświetlenia.</div>'
+    return
   }
 
-  let collectionsMap = [];
+  let collectionsMap = []
 
   let enrichedImages = allImages.map((src, globalIndex) => {
     const collectionId = src
-      .replace(/-[0-9]+\.[a-z0-9]+$/i, "")
-      .split("/content/")[1];
+      .replace(/-[0-9]+\.[a-z0-9]+$/i, '')
+      .split('/content/')[1]
 
     if (!collectionsMap.includes(collectionId)) {
-      collectionsMap.push(collectionId);
+      collectionsMap.push(collectionId)
     }
 
-    return { src, collectionId, globalIndex };
-  });
+    return { src, collectionId, globalIndex }
+  })
 
-  checkDubels(enrichedImages);
+  checkDubels(enrichedImages)
 
-  console.log({ collectionsMap, allImages, enrichedImages });
+  console.log({ collectionsMap, allImages, enrichedImages })
 
   enrichedImages.forEach((img) => {
     const siblings = enrichedImages.filter(
       (i) => i.collectionId === img.collectionId,
-    );
+    )
     img.collectionIndex =
-      siblings.findIndex((s) => s.globalIndex === img.globalIndex) + 1;
-    img.collectionTotal = siblings.length;
+      siblings.findIndex((s) => s.globalIndex === img.globalIndex) + 1
+    img.collectionTotal = siblings.length
 
-    img.collectionGlobalOrder = collectionsMap.indexOf(img.collectionId) + 1;
-  });
+    img.collectionGlobalOrder = collectionsMap.indexOf(img.collectionId) + 1
+  })
 
-  let imgs = [];
+  let imgs = []
   function render() {
     contentDiv.innerHTML = enrichedImages
       .map(
         (img, i) =>
-          `<img src="${img.src}" loading="lazy" class="${i === 0 ? "active" : ""}" />`,
+          `<img src="${img.src}" loading="lazy" class="${i === 0 ? 'active' : ''}" />`,
       )
-      .join("");
-    imgs = document.querySelectorAll(".content img");
+      .join('')
+    imgs = document.querySelectorAll('.content img')
   }
-  render();
+  render()
 
-  const speeds = [2, 5, 10, 20];
-  let currentIndex = parseInt(localStorage.getItem("galleryIndex")) || 0;
-  let speed =
-    parseInt(localStorage.getItem("gallerySpeed")) || 1000 * speeds[1];
-  let intervalId = null;
-  let isPaused = false;
+  const speeds = [2, 5, 10, 20]
+  let currentIndex = parseInt(localStorage.getItem('galleryIndex')) || 0
+  let speed = parseInt(localStorage.getItem('gallerySpeed')) || 1000 * speeds[1]
+  let intervalId = null
+  let isPaused = false
 
-  if (currentIndex >= imgs.length) currentIndex = 0;
+  if (currentIndex >= imgs.length) currentIndex = 0
 
   function showSlide(index) {
-    imgs.forEach((img) => img.classList.remove("active"));
+    imgs.forEach((img) => img.classList.remove('active'))
 
-    if (index >= imgs.length) index = 0;
-    if (index < 0) index = imgs.length - 1;
+    if (index >= imgs.length) index = 0
+    if (index < 0) index = imgs.length - 1
 
-    currentIndex = index;
-    imgs[currentIndex].classList.add("active");
-    localStorage.setItem("galleryIndex", currentIndex);
+    currentIndex = index
+    imgs[currentIndex].classList.add('active')
+    localStorage.setItem('galleryIndex', currentIndex)
 
-    updateCounter();
+    updateCounter()
   }
 
   function nextSlide() {
-    showSlide(currentIndex + 1);
+    showSlide(currentIndex + 1)
   }
   function prevSlide() {
-    showSlide(currentIndex - 1);
+    showSlide(currentIndex - 1)
   }
 
   function nextCollection() {
-    const cleanCurrentImg = enrichedImages[currentIndex];
+    const cleanCurrentImg = enrichedImages[currentIndex]
     const nextImg = enrichedImages.find(
       (img) =>
         img.collectionGlobalOrder > cleanCurrentImg.collectionGlobalOrder,
-    );
+    )
     if (nextImg) {
-      showSlide(nextImg.globalIndex);
-      restartInterval();
+      showSlide(nextImg.globalIndex)
+      restartInterval()
     }
   }
 
   function prevCollection() {
-    const cleanCurrentImg = enrichedImages[currentIndex];
+    const cleanCurrentImg = enrichedImages[currentIndex]
 
-    const targetCollectionOrder = cleanCurrentImg.collectionGlobalOrder - 1;
+    const targetCollectionOrder = cleanCurrentImg.collectionGlobalOrder - 1
 
     if (targetCollectionOrder > 0) {
       const targetImg = enrichedImages.find(
         (img) => img.collectionGlobalOrder === targetCollectionOrder,
-      );
+      )
       if (targetImg) {
-        showSlide(targetImg.globalIndex);
-        restartInterval();
+        showSlide(targetImg.globalIndex)
+        restartInterval()
       }
     }
   }
 
   function restartInterval() {
-    if (intervalId) clearInterval(intervalId);
+    if (intervalId) clearInterval(intervalId)
     if (!isPaused) {
-      intervalId = setInterval(nextSlide, speed);
+      intervalId = setInterval(nextSlide, speed)
     }
   }
 
   function shuffleCollections() {
     for (let i = collectionsMap.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [collectionsMap[i], collectionsMap[j]] = [
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[collectionsMap[i], collectionsMap[j]] = [
         collectionsMap[j],
         collectionsMap[i],
-      ];
+      ]
     }
 
-    const newOrder = [];
-    let gIdx = 0;
+    const newOrder = []
+    let gIdx = 0
     collectionsMap.forEach((colId, cIdx) => {
-      const colImgs = enrichedImages.filter(
-        (img) => img.collectionId === colId,
-      );
-      colImgs.sort((a, b) => a.collectionIndex - b.collectionIndex);
+      const colImgs = enrichedImages.filter((img) => img.collectionId === colId)
+      colImgs.sort((a, b) => a.collectionIndex - b.collectionIndex)
 
       colImgs.forEach((img) => {
-        img.globalIndex = gIdx++;
-        img.collectionGlobalOrder = cIdx + 1;
-        newOrder.push(img);
-      });
-    });
+        img.globalIndex = gIdx++
+        img.collectionGlobalOrder = cIdx + 1
+        newOrder.push(img)
+      })
+    })
 
-    enrichedImages = newOrder;
-    render();
-    showSlide(0);
-    restartInterval();
+    enrichedImages = newOrder
+    render()
+    showSlide(0)
+    restartInterval()
   }
 
   // --- 6. Eventy Dotykowe/Myszki ---
-  contentDiv.addEventListener("click", () => {
-    contentDiv.classList.toggle("fill-mode");
-  });
+  contentDiv.addEventListener('click', () => {
+    contentDiv.classList.toggle('fill-mode')
+  })
 
   // --- 7. Panel Sterowania ---
-  const controlsDiv = document.createElement("div");
-  controlsDiv.className = "controls";
+  const controlsDiv = document.createElement('div')
+  controlsDiv.className = 'controls'
 
   // Przycisk Random (R)
-  const randomBtn = document.createElement("button");
-  randomBtn.innerText = "R";
-  randomBtn.title = "Losuj Kolekcje";
-  randomBtn.style.marginBottom = "30px";
+  const randomBtn = document.createElement('button')
+  randomBtn.innerText = 'R'
+  randomBtn.title = 'Losuj Kolekcje'
+  randomBtn.style.marginBottom = '30px'
   randomBtn.onclick = () => {
-    shuffleCollections();
-  };
-  controlsDiv.appendChild(randomBtn);
+    shuffleCollections()
+  }
+  controlsDiv.appendChild(randomBtn)
 
   // Panel Przewijania Zdjęć (Nowy)
-  const slideControls = document.createElement("div");
-  slideControls.className = "collection-controls"; // Używamy tej samej klasy co dla kolekcji dla spójności
+  const slideControls = document.createElement('div')
+  slideControls.className = 'collection-controls' // Używamy tej samej klasy co dla kolekcji dla spójności
 
-  const prevSlideBtn = document.createElement("button");
-  prevSlideBtn.innerText = "<";
-  prevSlideBtn.title = "Poprzednie zdjęcie";
+  const prevSlideBtn = document.createElement('button')
+  prevSlideBtn.innerText = '<'
+  prevSlideBtn.title = 'Poprzednie zdjęcie'
   prevSlideBtn.onclick = () => {
-    prevSlide();
-    restartInterval();
-  };
+    prevSlide()
+    restartInterval()
+  }
 
-  const nextSlideBtn = document.createElement("button");
-  nextSlideBtn.innerText = ">";
-  nextSlideBtn.title = "Następne zdjęcie";
+  const nextSlideBtn = document.createElement('button')
+  nextSlideBtn.innerText = '>'
+  nextSlideBtn.title = 'Następne zdjęcie'
   nextSlideBtn.onclick = () => {
-    nextSlide();
-    restartInterval();
-  };
+    nextSlide()
+    restartInterval()
+  }
 
-  slideControls.appendChild(prevSlideBtn);
-  slideControls.appendChild(nextSlideBtn);
-  controlsDiv.appendChild(slideControls);
+  slideControls.appendChild(prevSlideBtn)
+  slideControls.appendChild(nextSlideBtn)
+  controlsDiv.appendChild(slideControls)
 
   // Przycisk Start/Stop
-  const toggleBtn = document.createElement("button");
-  toggleBtn.innerText = "| |";
+  const toggleBtn = document.createElement('button')
+  toggleBtn.innerText = '| |'
   toggleBtn.onclick = () => {
-    isPaused = !isPaused;
-    toggleBtn.innerText = isPaused ? "|>" : "| |";
-    restartInterval();
-  };
-  controlsDiv.appendChild(toggleBtn);
+    isPaused = !isPaused
+    toggleBtn.innerText = isPaused ? '|>' : '| |'
+    restartInterval()
+  }
+  controlsDiv.appendChild(toggleBtn)
 
   // Panel Kolekcji
-  const collectionControls = document.createElement("div");
-  collectionControls.className = "collection-controls";
+  const collectionControls = document.createElement('div')
+  collectionControls.className = 'collection-controls'
 
-  const prevColBtn = document.createElement("button");
-  prevColBtn.innerText = "<-";
-  prevColBtn.title = "Poprzednia kolekcja";
-  prevColBtn.onclick = prevCollection;
+  const prevColBtn = document.createElement('button')
+  prevColBtn.innerText = '<-'
+  prevColBtn.title = 'Poprzednia kolekcja'
+  prevColBtn.onclick = prevCollection
 
-  const nextColBtn = document.createElement("button");
-  nextColBtn.innerText = "->";
-  nextColBtn.title = "Następna kolekcja";
-  nextColBtn.onclick = nextCollection;
+  const nextColBtn = document.createElement('button')
+  nextColBtn.innerText = '->'
+  nextColBtn.title = 'Następna kolekcja'
+  nextColBtn.onclick = nextCollection
 
-  collectionControls.appendChild(prevColBtn);
-  collectionControls.appendChild(nextColBtn);
-  controlsDiv.appendChild(collectionControls);
+  collectionControls.appendChild(prevColBtn)
+  collectionControls.appendChild(nextColBtn)
+  controlsDiv.appendChild(collectionControls)
 
   // Przycisk Reset
-  const resetBtn = document.createElement("button");
-  resetBtn.innerText = "Reset";
+  const resetBtn = document.createElement('button')
+  resetBtn.innerText = 'Reset'
   resetBtn.onclick = () => {
-    showSlide(0);
-    restartInterval();
-  };
-  controlsDiv.appendChild(resetBtn);
+    showSlide(0)
+    restartInterval()
+  }
+  controlsDiv.appendChild(resetBtn)
 
   // Prędkość
-  const speedContainer = document.createElement("div");
-  speedContainer.className = "speed-controls";
-  controlsDiv.appendChild(speedContainer);
+  const speedContainer = document.createElement('div')
+  speedContainer.className = 'speed-controls'
+  controlsDiv.appendChild(speedContainer)
 
   speeds.forEach((s) => {
-    const btn = document.createElement("button");
-    const ms = s * 1000;
-    btn.innerText = `${s}s`;
-    if (speed === ms) btn.classList.add("active");
+    const btn = document.createElement('button')
+    const ms = s * 1000
+    btn.innerText = `${s}s`
+    if (speed === ms) btn.classList.add('active')
 
     btn.onclick = () => {
-      speed = ms;
-      localStorage.setItem("gallerySpeed", speed);
+      speed = ms
+      localStorage.setItem('gallerySpeed', speed)
       speedContainer
-        .querySelectorAll("button")
-        .forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      restartInterval();
-    };
-    speedContainer.appendChild(btn);
-  });
+        .querySelectorAll('button')
+        .forEach((b) => b.classList.remove('active'))
+      btn.classList.add('active')
+      restartInterval()
+    }
+    speedContainer.appendChild(btn)
+  })
 
-  document.body.appendChild(controlsDiv);
+  document.body.appendChild(controlsDiv)
 
   // --- 8. Licznik ---
-  const counterLeft = document.createElement("div");
-  counterLeft.className = "counter";
-  document.body.appendChild(counterLeft);
+  const counterLeft = document.createElement('div')
+  counterLeft.className = 'counter'
+  document.body.appendChild(counterLeft)
 
-  const counterRight = document.createElement("div");
-  counterRight.className = "counter-right";
-  document.body.appendChild(counterRight);
+  const counterRight = document.createElement('div')
+  counterRight.className = 'counter-right'
+  document.body.appendChild(counterRight)
 
   function updateCounter() {
-    const info = enrichedImages[currentIndex];
+    const info = enrichedImages[currentIndex]
     if (info) {
       // ZDJECIE_W_KOLEKCJI/ILOSC_ZDJEC_W_KOLEKCJI
       // KOLEKCJA/ILOSC_KOLEKCJI
-      counterLeft.innerHTML = `${info.collectionIndex}/${info.collectionTotal}<br>${info.collectionGlobalOrder}/${collectionsMap.length}`;
-      counterRight.innerText = `${currentIndex + 1}/${enrichedImages.length}`;
+      counterLeft.innerHTML = `${info.collectionIndex}/${info.collectionTotal}<br>${info.collectionGlobalOrder}/${collectionsMap.length}`
+      counterRight.innerText = `${currentIndex + 1}/${enrichedImages.length}`
     }
   }
 
   // --- Start ---
-  showSlide(0);
-  restartInterval();
+  showSlide(0)
+  restartInterval()
 
-  try {
-    const wakeLock = await navigator.wakeLock.request("screen");
-  } catch (err) {
-    console.log(`${err.name}, ${err.message}`, err);
+  await Promise.resolve()
+
+  // --- Wake Lock: re-request when released and on visibility change ---
+  let wakeLock = null
+
+  async function requestWakeLock() {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen')
+
+      wakeLock.addEventListener('release', () => {
+        console.log('WakeLock released — ponawiam żądanie...')
+        setTimeout(requestWakeLock, 1000)
+      })
+
+      console.log('WakeLock acquired')
+    } catch (err) {
+      console.log(`${err.name || 'Error'}: ${err.message || err}`, err)
+      setTimeout(requestWakeLock, 5000)
+    }
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      requestWakeLock()
+    }
+  })
+
+  await requestWakeLock()
 }
 
-main().catch(console.error);
+main().catch(console.error)
