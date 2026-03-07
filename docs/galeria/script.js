@@ -236,16 +236,74 @@ async function main() {
   if (currentIndex >= imgs.length) currentIndex = 0
 
   function showSlide(index) {
-    imgs.forEach((img) => img.classList.remove('active'))
+    if (!imgs || imgs.length === 0) return
 
     if (index >= imgs.length) index = 0
     if (index < 0) index = imgs.length - 1
 
-    currentIndex = index
-    imgs[currentIndex].classList.add('active')
-    localStorage.setItem('galleryIndex', currentIndex)
+    const prevIndex = currentIndex
+    const nextIndex = index
 
-    updateCounter()
+    // Jeśli to ten sam slajd — ustaw bez animacji
+    if (prevIndex === nextIndex) {
+      imgs.forEach((img) => img.classList.remove('active'))
+      imgs[nextIndex].style.display = 'block'
+      imgs[nextIndex].classList.add('active')
+      localStorage.setItem('galleryIndex', nextIndex)
+      currentIndex = nextIndex
+      updateCounter()
+      return
+    }
+
+    const from = imgs[prevIndex]
+    const to = imgs[nextIndex]
+
+    const effects = ['old-zoom', 'shrink', 'fly-down']
+    const effect = effects[Math.floor(Math.random() * effects.length)]
+
+    // Przygotuj elementy
+    if (from) {
+      from.classList.remove('active')
+      from.classList.add('exit-' + effect)
+      from.style.zIndex = '1'
+      from.style.display = 'block'
+    }
+
+    if (to) {
+      to.style.display = 'block'
+      to.classList.add('enter-' + effect)
+      to.style.zIndex = '2'
+    }
+
+    let finished = false
+    function finishTransition() {
+      if (finished) return
+      finished = true
+
+      if (from) {
+        from.classList.remove('exit-' + effect)
+        from.style.display = 'none'
+        from.style.zIndex = ''
+      }
+
+      if (to) {
+        to.classList.remove('enter-' + effect)
+        to.classList.add('active')
+        to.style.zIndex = ''
+      }
+
+      currentIndex = nextIndex
+      localStorage.setItem('galleryIndex', currentIndex)
+      updateCounter()
+    }
+
+    // nasłuch na zakończenie animacji (oba elementy mogą kończyć różnie)
+    const onAnimEnd = () => finishTransition()
+    if (from) from.addEventListener('animationend', onAnimEnd, { once: true })
+    if (to) to.addEventListener('animationend', onAnimEnd, { once: true })
+
+    // Fallback — w razie problemów z eventem
+    setTimeout(() => finishTransition(), 1000)
   }
 
   function nextSlide() {
