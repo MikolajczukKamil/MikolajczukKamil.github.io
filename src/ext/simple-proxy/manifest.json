@@ -17,7 +17,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "simple-fetch-proxy@simple-fetch-extension",
+      "id": "simple-fetch-proxy-priv@simple-fetch-extension",
       "data_collection_permissions": {
         "required": ["none"]
       }
