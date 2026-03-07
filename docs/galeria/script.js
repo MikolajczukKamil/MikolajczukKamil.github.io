@@ -305,8 +305,22 @@ async function main() {
   }
 
   // --- 6. Eventy Dotykowe/Myszki ---
-  contentDiv.addEventListener('click', () => {
-    contentDiv.classList.toggle('fill-mode')
+  // Kliknięcie w obraz: top 1/3 = poprzednie, bottom 1/3 = następne,
+  // środkowa 1/3 przełącza tryb pełnego wypełnienia (`fill-mode`).
+  contentDiv.addEventListener('click', (e) => {
+    const rect = contentDiv.getBoundingClientRect()
+    const y = e.clientY - rect.top
+    const h = rect.height || window.innerHeight
+
+    if (y < h / 3) {
+      prevSlide()
+      restartInterval()
+    } else if (y > (2 * h) / 3) {
+      nextSlide()
+      restartInterval()
+    } else {
+      contentDiv.classList.toggle('fill-mode')
+    }
   })
 
   // --- 7. Panel Sterowania ---
@@ -334,6 +348,8 @@ async function main() {
     prevSlide()
     restartInterval()
   }
+  // Ukryj widoczne przyciski nawigacji — zastępujemy klikaniem obszaru obrazu
+  prevSlideBtn.style.display = 'none'
 
   const nextSlideBtn = document.createElement('button')
   nextSlideBtn.innerText = '>'
@@ -342,6 +358,8 @@ async function main() {
     nextSlide()
     restartInterval()
   }
+  // Ukryj widoczne przyciski nawigacji — zastępujemy klikaniem obszaru obrazu
+  nextSlideBtn.style.display = 'none'
 
   slideControls.appendChild(prevSlideBtn)
   slideControls.appendChild(nextSlideBtn)
