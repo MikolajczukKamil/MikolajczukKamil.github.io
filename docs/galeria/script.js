@@ -79,6 +79,7 @@ async function main() {
   loadingIndicator.innerText = 'Ładowanie...'
   document.body.appendChild(loadingIndicator)
 
+  const canUseProxy = new URLSearchParams(window.location.search).has('proxy');
   let useProxy = false
 
   try {
@@ -122,15 +123,20 @@ async function main() {
             )
 
             console.log({ e })
-            useProxy = true
-            alert('Error useProxy: ' + e.toString() + ' - ' + JSON.stringify(e))
-            continue
+
+            if (canUseProxy) {
+              useProxy = true
+              continue
+            } else {
+              alert('CORS error try use proxy get param')
+              break
+            }
           }
         }
 
-        if (!response.ok) {
+        if (!response?.ok) {
           console.warn(
-            `Nie można pobrać strony ${page} z ${baseUrl}, status: ${response.status}`,
+            `Nie można pobrać strony ${page} z ${baseUrl}, status: ${response?.status}`,
             response,
           )
           break
