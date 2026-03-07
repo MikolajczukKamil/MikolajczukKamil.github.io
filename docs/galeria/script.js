@@ -109,6 +109,7 @@ async function main() {
 
           console.log({ e })
           useProxy = true
+          alert('Error useProxy: ' + e.toString() + ' - ' + JSON.stringify(e))
           continue
         }
       }
